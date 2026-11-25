@@ -10,9 +10,9 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Fast SAST (Secrets Only)
-        uses: returntocorp/semgrep-action@v1
-        with:
-          config: "p/secrets"
+        run: >
+          docker run --rm -v "${{ github.workspace }}:/src" semgrep/semgrep
+          semgrep scan --config p/secrets
 
       - name: Simulated Deployment
         run: echo "Core build passed! Simulating deployment..."
