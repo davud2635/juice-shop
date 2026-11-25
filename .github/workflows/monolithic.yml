@@ -1,6 +1,6 @@
 name: Scenario 1 - Monolithic Pipeline
-on: 
-  workflow_dispatch: 
+on:
+  workflow_dispatch:
 
 jobs:
   all-in-one-pipeline:
@@ -19,13 +19,14 @@ jobs:
         with:
           image-ref: 'bkimminich/juice-shop:latest'
           format: 'table'
-          exit-code: '0' # We set to 0 so it doesn't stop our experiment early
+          severity: 'CRITICAL,HIGH,MEDIUM,LOW'
+          exit-code: '0' # Set to 0 so it doesn't stop our experiment early
 
       - name: Start Juice Shop (Simulated Staging)
         run: |
           docker run -d -p 3000:3000 bkimminich/juice-shop:latest
           sleep 15 # Wait for the server to start
-          
+
       - name: DAST Scan (OWASP ZAP)
         uses: zaproxy/action-baseline@v0.15.0
         with:
