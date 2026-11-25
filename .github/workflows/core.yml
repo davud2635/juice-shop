@@ -1,0 +1,18 @@
+name: Scenario 2 - Core Pipeline (Track 1)
+on: 
+  workflow_dispatch:
+
+jobs:
+  fast-build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Fast SAST (Secrets Only)
+        uses: returntocorp/semgrep-action@v1
+        with:
+          config: "p/secrets"
+
+      - name: Simulated Deployment
+        run: echo "Core build passed! Simulating deployment..."
