@@ -1,0 +1,30 @@
+name: Scenario 2 - Security Pipeline (Track 2)
+on:
+  workflow_run:
+    workflows: ["Scenario 2 - Core Pipeline (Track 1)"]
+    types:
+      - completed
+
+jobs:
+  deep-scans:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Deep SAST (Semgrep Full)
+        uses: returntocorp/semgrep-action@v1
+        with:
+          config: "p/ci"
+
+      - name: Start Juice Shop (Simulated Staging)
+        run: |
+          docker run -d -p 3000:3000 bkimminich/juice-shop:latest
+          sleep 15
+          
+      - name: DAST Scan (OWASP ZAP)
+        uses: zaproxy/action-baseline@v0.12.0
+        with:
+          target: 'http://localhost:3000'
+          issue_title: 'DAST Vulnerability Found in Async Scan'
